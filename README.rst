@@ -65,7 +65,10 @@ be valid json like:
     }
 
 The ``Properties Mapping`` must contain the Plone property ``userid``.
-
+Using a config file
+Create a config file
+`${var-dir}/<site id>/client.json`
+If the plugin finds this file when it is installed it will use it to configure the plugin
 
 Links
 -----

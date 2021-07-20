@@ -49,5 +49,6 @@ setup(name='ftw.oidcauth',
 
       [z3c.autoinclude.plugin]
       target = plone
+      [console_scripts]
       """,
       )
