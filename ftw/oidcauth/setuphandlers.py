@@ -24,8 +24,24 @@ class HiddenProfiles(object):
 def _add_oidc(portal, pluginid, title): 
     pas = portal.acl_users
     if pluginid in pas.objectIds():
+        plugin = pas[pluginid]
+        _set_config(plugin,portal)
         return title + ' already installed.'
     plugin = OIDCPlugin(pluginid, title=title)
+    _set_config(plugin,portal)
+        
+    pas._setObject(pluginid, plugin)
+    plugin = pas[plugin.getId()]  # get plugin acquisition wrapped!
+    for info in pas.plugins.listPluginTypeInfo():
+        interface = info['interface']
+        if not interface.providedBy(plugin):
+            continue
+        pas.plugins.activatePlugin(interface, plugin.getId())
+        pas.plugins.movePluginsDown(
+            interface,
+            [x[0] for x in pas.plugins.listPlugins(interface)[:-1]],
+        )
+def _set_config(plugin,portal):
     config_file = os.path.join(os.path.dirname(getConfiguration().clienthome),'oidc',portal.id,'client.json')
     if Path(config_file).exists():
         f = open(config_file)
@@ -40,18 +56,6 @@ def _add_oidc(portal, pluginid, title):
                 plugin._roles = tuple([role.strip() for role in roles.split(',') if role])
             plugin._setPropValue(key, value)
         f.close()
-        
-    pas._setObject(pluginid, plugin)
-    plugin = pas[plugin.getId()]  # get plugin acquisition wrapped!
-    for info in pas.plugins.listPluginTypeInfo():
-        interface = info['interface']
-        if not interface.providedBy(plugin):
-            continue
-        pas.plugins.activatePlugin(interface, plugin.getId())
-        pas.plugins.movePluginsDown(
-            interface,
-            [x[0] for x in pas.plugins.listPlugins(interface)[:-1]],
-        )
 def _remove_plugin(pas, pluginid=DEFAULT_ID_OIDC):
     if pluginid in pas.objectIds():
         pas.manage_delObjects([pluginid])
