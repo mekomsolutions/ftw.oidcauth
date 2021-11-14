@@ -28,4 +28,8 @@
       factory=".setuphandlers.HiddenProfiles"
       name="ftw.oidcauth-hiddenprofiles"
       />
+  <subscriber for="zope.processlifetime.IProcessStarting"
+    handler=".config.configure_oauth"
+    />
+
 </configure>
