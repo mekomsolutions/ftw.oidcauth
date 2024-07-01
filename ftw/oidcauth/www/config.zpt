@@ -82,6 +82,13 @@ Error: <b tal:content="options/error_message">
                      tal:attributes="value context/jwks_endpoint"/></td>
         </tr>
         <tr valign="top">
+          <td><div class="form-label">End Session Endpoint</div>
+          <div class="form-help"></div>
+          </td>
+          <td><input type="text" name="end-session-endpoint" size="60"
+                     tal:attributes="value context/end_session_endpoint"/></td>
+        </tr>
+        <tr valign="top">
           <td><div class="form-label">Enable Auto Provisioning</div>
           <div class="form-help"></div>
           </td>

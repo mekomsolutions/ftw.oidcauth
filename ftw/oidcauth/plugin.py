@@ -84,6 +84,7 @@ class OIDCPlugin(BasePlugin):
         self.token_endpoint = None
         self.user_endpoint = None
         self.jwks_endpoint = None
+        self.end_session_endpoint = None
         self._auto_provisioning_enabled = True
         self.properties_mapping = json.dumps({
             "userid": "sub",
@@ -228,6 +229,7 @@ class OIDCPlugin(BasePlugin):
         self.token_endpoint = REQUEST.form.get('token-endpoint')
         self.user_endpoint = REQUEST.form.get('user-endpoint')
         self.jwks_endpoint = REQUEST.form.get('jwks-endpoint')
+        self.end_session_endpoint = REQUEST.form.get('end-session-endpoint')
         self._auto_provisioning_enabled = REQUEST.form.get('auto-provisioning-enabled')
 
         roles = REQUEST.form.get('roles')
