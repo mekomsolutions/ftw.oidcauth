@@ -11,4 +11,11 @@
     permission="zope.Public"
     />
 
+  <browser:page
+    for="plone.app.layout.navigation.interfaces.INavigationRoot"
+    name="logout"
+    class=".oidc.OIDCLogoutView"
+    permission="zope.Public"
+    layer="ftw.oidcauth.interfaces.IOIDCLayer"
+    />
 </configure>
