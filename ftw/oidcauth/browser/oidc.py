@@ -1,5 +1,6 @@
 from Products.CMFPlone.browser.login.logout import LogoutView
 from Products.Five import BrowserView
+from plone import api
 from ftw.oidcauth.browser.oidc_tools import OIDCClientAuthentication
 from ftw.oidcauth.errors import OIDCBaseError
 from six.moves.urllib.parse import parse_qsl, urlencode
@@ -85,6 +86,7 @@ class OIDCView(BrowserView):
             params.update(dict(parse_qsl(url_parts[1])))
         params["client_id"] = p.client_id
         params["post_logout_redirect_uri"] = redirect
+        params["id_token_hint"] = self.request.get('id_token')
         logout_url = "{}?{}".format(logout_base_url, urlencode(params))
         self.request.response.redirect(logout_url)
 
@@ -92,12 +94,15 @@ class OIDCView(BrowserView):
 class OIDCLogoutView(LogoutView):
     def __call__(self):
         if OIDCClientAuthentication.get_oidc_plugin().end_session_endpoint:
+            id_token = api.user.get_current().getUser().getProperty('id_token')
             base_url = get_base_url(self.context, self.request)
             next_ = self.request.get('next')
             oidc_logout = base_url + '/oidc/logout'
+            params = {'id_token': id_token}
             if next_ is None or not next_.startswith(oidc_logout):
                 if next_:
-                    oidc_logout = "{}?{}".format(oidc_logout, urlencode({'redirect': next_}))
+                    params["redirect"] = next_
+                oidc_logout = "{}?{}".format(oidc_logout, urlencode(params))
                 redirect = "{}?{}".format(base_url + '/logout', urlencode({'next': oidc_logout}))
                 self.request.response.redirect(redirect)
                 return
