@@ -89,6 +89,17 @@ Error: <b tal:content="options/error_message">
                      tal:attributes="value context/end_session_endpoint"/></td>
         </tr>
         <tr valign="top">
+          <td><div class="form-label">Skip Logout Confirmation</div>
+          <div class="form-help"></div>
+          </td>
+          <td>
+            <input type="checkbox" name="skip-logout-confirmation" checked="on"
+                   tal:condition="context/skip_logout_confirmation"/>
+            <input type="checkbox" name="skip-logout-confirmation"
+                   tal:condition="not: context/skip_logout_confirmation"/>
+          </td>
+        </tr>
+        <tr valign="top">
           <td><div class="form-label">Enable Auto Provisioning</div>
           <div class="form-help"></div>
           </td>

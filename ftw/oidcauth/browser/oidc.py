@@ -86,7 +86,8 @@ class OIDCView(BrowserView):
             params.update(dict(parse_qsl(url_parts[1])))
         params["client_id"] = p.client_id
         params["post_logout_redirect_uri"] = redirect
-        params["id_token_hint"] = self.request.get('id_token')
+        if p.skip_logout_confirmation and self.request.get('id_token'):
+            params["id_token_hint"] = self.request.get('id_token')
         logout_url = "{}?{}".format(logout_base_url, urlencode(params))
         self.request.response.redirect(logout_url)
 
