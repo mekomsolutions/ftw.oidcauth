@@ -35,10 +35,15 @@ class OIDCClientAuthentication(object):
         self.state = state
         self.request = request
         self.oidc_plugin = self.get_oidc_plugin()
+        member_data_tool = api.portal.get_tool("portal_memberdata")
+        if not member_data_tool.hasProperty("id_token"):
+            member_data_tool.manage_addProperty(id="id_token", value="", type="string")
 
     def authorize(self):
-        user_info = self.authorize_user()
+        auth_info = self.authorize_user()
+        user_info = auth_info['user_info']
         props = self.map_properties(user_info)
+        props["id_token"] = auth_info["id_token"]
         oidc_user_handler = OIDCUserHandler(self.request, props)
         oidc_user_handler.login_user()
         if oidc_user_handler.is_user_logged_in:
@@ -70,8 +75,10 @@ class OIDCClientAuthentication(object):
         token = self.obtain_validated_token(client_auth_token)
         user_info = self.get_user_info(client_auth_token.get('access_token'))
         self.validate_sub_matching(token, user_info)
-
-        return user_info
+        return {
+            "user_info": user_info,
+            "id_token": client_auth_token.get('id_token')
+        }
 
     def authorize_client(self):
         """Client side validation of user request code.
